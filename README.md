@@ -2,7 +2,62 @@
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/picky_guard`. To experiment with that code, run `bin/console` for an interactive prompt.
 
-TODO: Delete this and the text above, and describe your gem
+```
+* role : can be symbol or string
+* action : can be symbol or string
+
+# file tree
+app
+  - picky_guard
+    - role_policies
+      - role_policies.rb
+    - resource_actions
+      - resource_actions.rb
+    - policies
+      - policy_a.rb
+      - policy_b.rb
+      - policy_c.rb
+
+# role_policies.rb
+class RolePolicies < PickyGuard::RolePolicies
+  def initialize
+    map(:role_a, [PolicyA, PolicyB])
+    map(:role_b, [PolicyB])
+  end 
+end
+
+# resource_actions.rb
+class ResourceActions < PickyGuard::ResourceActions
+  def initialize
+    map(Report, ['Read'])
+    
+    [App, Campaign].each do |resource|
+      map(resource, ['Create', 'Read', 'Update'])
+    end
+  end
+end
+
+# policy_a.rb
+class PolicyA < PickyGuard::Policy
+  def initialize(current_user)
+    add_statement(
+      PickyGuard::Statement.allow(
+        ['Create', 'Read', 'Update'],
+        App,
+        proc { App.where(company: current_user.company) }
+      )
+    )
+    
+    add_statement(
+      PickyGuard::Statement.deny(
+        ['Read'],
+        App,
+        { company: current_user.company, deleted: true }
+      )
+    )
+  end
+end
+```
 
 ## Installation
 
