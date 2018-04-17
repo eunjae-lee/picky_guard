@@ -2,7 +2,8 @@ PATH
   remote: .
   specs:
     picky_guard (0.1.0)
-      activerecord (>= 4.0)
+      activerecord
+      cancancan
 
 GEM
   remote: https://rubygems.org/
@@ -19,6 +20,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
+    cancancan (2.2.0)
     concurrent-ruby (1.0.5)
     diff-lcs (1.3)
     i18n (1.0.0)

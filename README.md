@@ -9,21 +9,20 @@ Welcome to your new gem! In this directory, you'll find the files you need to be
 # file tree
 app
   - picky_guard
-    - role_policies
-      - role_policies.rb
-    - resource_actions
-      - resource_actions.rb
     - policies
       - policy_a.rb
       - policy_b.rb
       - policy_c.rb
+    - role_policies.rb
+    - resource_actions.rb
+    - user_role_checker.rb
 
 # role_policies.rb
 class RolePolicies < PickyGuard::RolePolicies
   def initialize
     map(:role_a, [PolicyA, PolicyB])
     map(:role_b, [PolicyB])
-  end 
+  end
 end
 
 # resource_actions.rb
@@ -34,6 +33,13 @@ class ResourceActions < PickyGuard::ResourceActions
     [App, Campaign].each do |resource|
       map(resource, ['Create', 'Read', 'Update'])
     end
+  end
+end
+
+# user_role_checker.rb
+class UserRoleChecker < PickyGuard::UserRoleChecker
+  def self.check(user, role)
+    # ...
   end
 end
 

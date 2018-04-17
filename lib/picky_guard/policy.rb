@@ -4,7 +4,11 @@ require 'picky_guard/validator'
 
 module PickyGuard
   class Policy
-    def initialize(current_user); end
+    attr_reader :statements
+
+    def initialize(current_user)
+      # do nothing here
+    end
 
     def add_statement(statement)
       Validator.validate_statement!(statement)
