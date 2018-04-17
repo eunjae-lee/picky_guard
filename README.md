@@ -8,6 +8,8 @@ Welcome to your new gem! In this directory, you'll find the files you need to be
 
 # file tree
 app
+  - models
+    - ability.rb
   - picky_guard
     - policies
       - policy_a.rb
@@ -16,6 +18,13 @@ app
     - role_policies.rb
     - resource_actions.rb
     - user_role_checker.rb
+
+# ability.rb
+class Ability < PickyGuard::Loader
+  def initialize(user)
+    adjust(user, UserRoleChecker, RolePolicies, ResourceActions)
+  end
+end
 
 # role_policies.rb
 class RolePolicies < PickyGuard::RolePolicies
