@@ -89,6 +89,24 @@ class AppReadAccess2 < PickyGuard::Policy
   end
 end
 
+class MyRolePolicies3 < PickyGuard::RolePolicies
+  def initialize
+    map(:role_manager, [AppFullAccess3])
+  end
+end
+
+class AppFullAccess3 < PickyGuard::Policy
+  def initialize(current_user)
+    add_statement(
+      PickyGuard::Statement.allow(
+        %w[Create Read Update Delete UnknownWeirdAction],
+        App,
+        proc { App.all }
+      )
+    )
+  end
+end
+
 module PickyGuard
   describe Loader do
     before(:each) do
@@ -146,6 +164,14 @@ module PickyGuard
           expect(ability.can?(action, app)).to be_falsey
         end
       end
+    end
+
+    it 'should deny unknown action' do
+      ability = MyAbility.new
+      expect do
+        ability.adjust(:a, MyUserRoleChecker, MyRolePolicies3,
+                       MyResourceActions)
+      end.to raise_error(RuntimeError)
     end
   end
 end

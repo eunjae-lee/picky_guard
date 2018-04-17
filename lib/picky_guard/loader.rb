@@ -8,21 +8,15 @@ module PickyGuard
 
     def adjust(user, user_role_checker_class, role_policies_class, resource_actions_class)
       role_policies = role_policies_class.new
-
-      policies = filter_policies(user, user_role_checker_class, role_policies)
-      adjust_policies(user, policies)
+      policies = gather_policies(user, user_role_checker_class, role_policies)
+      statements = gather_statements(user, policies, resource_actions_class.new)
+      adjust_statements(statements)
     end
 
     private
 
-    def adjust_policies(user, policies)
-      policies.each do |policy|
-        adjust_policy(user, policy)
-      end
-    end
-
-    def adjust_policy(user, policy_class)
-      policy_class.new(user).statements.each do |statement|
+    def adjust_statements(statements)
+      statements.each do |statement|
         adjust_statement(statement)
       end
     end
@@ -47,12 +41,32 @@ module PickyGuard
       effect == Statement::EFFECT_ALLOW
     end
 
-    def filter_policies(user, user_role_checker_class, role_policies)
-      role_policies
-        .roles
-        .select { |role| user_role_checker_class.check(user, role) }
-        .map { |role| role_policies.policies_for(role) }
-        .flatten
+    def gather_policies(user, user_role_checker_class, role_policies)
+      role_policies.roles
+                   .select { |role| user_role_checker_class.check(user, role) }
+                   .map { |role| role_policies.policies_for(role) }
+                   .flatten
+    end
+
+    def gather_statements(user, policies, resource_actions)
+      policies.map { |policy_class| policy_class.new(user) }
+              .map do |policy|
+                validate_policy(policy, resource_actions)
+                policy.statements
+              end.flatten
+    end
+
+    def validate_policy(policy, resource_actions)
+      policy.statements.each do |statement|
+        validate_statement(resource_actions, statement)
+      end
+    end
+
+    def validate_statement(resource_actions, statement)
+      statement.actions.each do |action|
+        valid = resource_actions.action_exist?(statement.resource, action)
+        raise 'Unknown action!' unless valid
+      end
     end
   end
 end
