@@ -71,7 +71,7 @@ class AppFullAccess2 < PickyGuard::Policy
       PickyGuard::Statement.allow(
         %w[Create Read Update Delete],
         App,
-        proc { App.all }
+        {}
       )
     )
   end
@@ -83,7 +83,7 @@ class AppReadAccess2 < PickyGuard::Policy
       PickyGuard::Statement.allow(
         %w[Read],
         App,
-        proc { App.all }
+        {}
       )
     )
   end
@@ -101,7 +101,31 @@ class AppFullAccess3 < PickyGuard::Policy
       PickyGuard::Statement.allow(
         %w[Create Read Update Delete UnknownWeirdAction],
         App,
-        proc { App.all }
+        {}
+      )
+    )
+  end
+end
+
+class MyUserRoleChecker4 < PickyGuard::UserRoleChecker
+  def self.check(user, role)
+    true
+  end
+end
+
+class MyRolePolicies4 < PickyGuard::RolePolicies
+  def initialize
+    map(:role_manager, [AppFullAccess4])
+  end
+end
+
+class AppFullAccess4 < PickyGuard::Policy
+  def initialize(current_user)
+    add_statement(
+      PickyGuard::Statement.allow(
+        %w[Create Read Update Delete],
+        App,
+        status1: current_user.val
       )
     )
   end
@@ -112,7 +136,7 @@ module PickyGuard
     before(:each) do
       App.destroy_all
       3.times do
-        App.create
+        App.create(status1: 1)
       end
     end
 
@@ -126,34 +150,15 @@ module PickyGuard
       end
     end
 
+    it 'fetches records for manager' do
+      ability = MyAbility.new
+      ability.adjust(:a, MyUserRoleChecker, MyRolePolicies, MyResourceActions)
+      expect(App.accessible_by(ability, 'Read').count).to eq(3)
+    end
+
     it 'works with reader' do
       ability = MyAbility.new
       ability.adjust(:b, MyUserRoleChecker, MyRolePolicies, MyResourceActions)
-      %w[Read].each do |action|
-        App.all.each do |app|
-          expect(ability.can?(action, app)).to be_truthy
-        end
-      end
-      %w[Create Update Delete].each do |action|
-        App.all.each do |app|
-          expect(ability.can?(action, app)).to be_falsey
-        end
-      end
-    end
-
-    it 'works with manager (with proc conditions)' do
-      ability = MyAbility.new
-      ability.adjust(:a, MyUserRoleChecker, MyRolePolicies2, MyResourceActions)
-      %w[Create Read Update Delete].each do |action|
-        App.all.each do |app|
-          expect(ability.can?(action, app)).to be_truthy
-        end
-      end
-    end
-
-    it 'works with reader (with proc conditions)' do
-      ability = MyAbility.new
-      ability.adjust(:b, MyUserRoleChecker, MyRolePolicies2, MyResourceActions)
       %w[Read].each do |action|
         App.all.each do |app|
           expect(ability.can?(action, app)).to be_truthy
@@ -172,6 +177,18 @@ module PickyGuard
         ability.adjust(:a, MyUserRoleChecker, MyRolePolicies3,
                        MyResourceActions)
       end.to raise_error(RuntimeError)
+    end
+
+    it 'works with values from current_user' do
+      user = OpenStruct.new(val: 1)
+      ability = MyAbility.new
+      ability.adjust(user, MyUserRoleChecker4, MyRolePolicies4, MyResourceActions)
+      %w[Create Update Delete Read].each do |action|
+        App.all.each do |app|
+          expect(ability.can?(action, app)).to be_truthy
+        end
+      end
+      expect(App.accessible_by(ability, 'Read').count).to eq(3)
     end
   end
 end

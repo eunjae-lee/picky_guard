@@ -12,7 +12,7 @@ class PolicyA < PickyGuard::Policy
       PickyGuard::Statement.allow(
         %w[Create Read Update],
         App,
-        proc { App.where(status1: 2) }
+        status1: 2
       )
     )
   end
@@ -33,11 +33,6 @@ module PickyGuard
       statement2 = Statement.allow([], App, {})
       policy.add_statement(statement2)
       expect(policy.instance_variable_get(:@statements).size).to eq(2)
-    end
-
-    it 'contains statements - class style' do
-      policy = PolicyA.new(@current_user)
-      expect(policy.instance_variable_get(:@statements).size).to eq(1)
     end
 
     it 'passes validator' do

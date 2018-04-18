@@ -59,7 +59,7 @@ class PolicyA < PickyGuard::Policy
       PickyGuard::Statement.allow(
         ['Create', 'Read', 'Update'],
         App,
-        proc { App.where(company: current_user.company) }
+        { company: current_user.company }
       )
     )
     

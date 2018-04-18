@@ -30,11 +30,7 @@ module PickyGuard
     end
 
     def build_rule(action, effect, conditions, resource)
-      if conditions.is_a? Proc
-        CanCan::Rule.new(positive?(effect), action, conditions.call, nil, nil)
-      else
-        CanCan::Rule.new(positive?(effect), action, resource, conditions, nil)
-      end
+      CanCan::Rule.new(positive?(effect), action, resource, conditions, nil)
     end
 
     def positive?(effect)

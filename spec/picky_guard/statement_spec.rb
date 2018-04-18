@@ -12,7 +12,7 @@ end
 module PickyGuard
   describe Statement do
     it 'accept three parameters at `allow`' do
-      Statement.allow(%w[Create Read Update], App, proc { App.where(status1: 1) })
+      Statement.allow(%w[Create Read Update], App, {})
     end
 
     it 'only accepts an array as 1st parameter' do
@@ -35,14 +35,10 @@ module PickyGuard
       end.not_to raise_error
     end
 
-    it 'only accepts proc or hash as 3rd parameter' do
+    it 'only accepts hash as 3rd parameter' do
       expect do
         Statement.allow(['Create'], App, App.where(status1: 1))
       end.to raise_error(ArgumentError)
-
-      expect do
-        Statement.allow(['Create'], App, proc { App.where(status1: 1) })
-      end.not_to raise_error
 
       expect do
         Statement.allow(['Create'], App, status1: 1)

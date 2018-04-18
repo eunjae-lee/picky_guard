@@ -8,7 +8,7 @@ class ManageAllReports < PickyGuard::Policy
     #   PickyGuard::Statement.allow(
     #       %w(Create Read Update Delete),
     #       Report,
-    #       proc { Report.where(company: current_user.company) }
+    #       { company: current_user.company }
     #   )
     # )
   end

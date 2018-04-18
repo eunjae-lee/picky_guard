@@ -7,7 +7,7 @@ module PickyGuard
     it 'raises when not overriding it' do
       expect do
         UserRoleChecker.check(nil, nil)
-      end.to raise_error
+      end.to raise_error(RuntimeError)
     end
 
     it 'passes when overridden' do
