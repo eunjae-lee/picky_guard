@@ -5,131 +5,7 @@ require 'picky_guard/role_policies'
 require 'picky_guard/user_role_checker'
 require 'picky_guard/resource_actions'
 require 'picky_guard/policy'
-
-class MyAbility < PickyGuard::Loader
-end
-
-class App < ActiveRecord::Base
-end
-
-class MyRolePolicies < PickyGuard::RolePolicies
-  def initialize
-    map(:role_manager, [AppFullAccess])
-    map(:role_reader, [AppReadAccess])
-  end
-end
-
-class MyUserRoleChecker < PickyGuard::UserRoleChecker
-  def self.check(user, role)
-    {
-      a: [:role_manager],
-      b: [:role_reader]
-    }[user].include? role
-  end
-end
-
-class MyResourceActions < PickyGuard::ResourceActions
-  def initialize
-    map(App, %w[Create Read Update Delete])
-  end
-end
-
-class AppFullAccess < PickyGuard::Policy
-  def initialize(current_user)
-    add_statement(
-      PickyGuard::Statement.allow(
-        %w[Create Read Update Delete],
-        App,
-        {}
-      )
-    )
-  end
-end
-
-class AppReadAccess < PickyGuard::Policy
-  def initialize(current_user)
-    add_statement(
-      PickyGuard::Statement.allow(
-        %w[Read],
-        App,
-        {}
-      )
-    )
-  end
-end
-
-class MyRolePolicies2 < PickyGuard::RolePolicies
-  def initialize
-    map(:role_manager, [AppFullAccess2])
-    map(:role_reader, [AppReadAccess2])
-  end
-end
-
-class AppFullAccess2 < PickyGuard::Policy
-  def initialize(current_user)
-    add_statement(
-      PickyGuard::Statement.allow(
-        %w[Create Read Update Delete],
-        App,
-        {}
-      )
-    )
-  end
-end
-
-class AppReadAccess2 < PickyGuard::Policy
-  def initialize(current_user)
-    add_statement(
-      PickyGuard::Statement.allow(
-        %w[Read],
-        App,
-        {}
-      )
-    )
-  end
-end
-
-class MyRolePolicies3 < PickyGuard::RolePolicies
-  def initialize
-    map(:role_manager, [AppFullAccess3])
-  end
-end
-
-class AppFullAccess3 < PickyGuard::Policy
-  def initialize(current_user)
-    add_statement(
-      PickyGuard::Statement.allow(
-        %w[Create Read Update Delete UnknownWeirdAction],
-        App,
-        {}
-      )
-    )
-  end
-end
-
-class MyUserRoleChecker4 < PickyGuard::UserRoleChecker
-  def self.check(user, role)
-    true
-  end
-end
-
-class MyRolePolicies4 < PickyGuard::RolePolicies
-  def initialize
-    map(:role_manager, [AppFullAccess4])
-  end
-end
-
-class AppFullAccess4 < PickyGuard::Policy
-  def initialize(current_user)
-    add_statement(
-      PickyGuard::Statement.allow(
-        %w[Create Read Update Delete],
-        App,
-        status1: current_user.val
-      )
-    )
-  end
-end
+require_relative './classes_for_loader_spec'
 
 module PickyGuard
   describe Loader do
@@ -138,10 +14,15 @@ module PickyGuard
       3.times do
         App.create(status1: 1)
       end
+
+      Campaign.destroy_all
+      4.times do
+        Campaign.create
+      end
     end
 
     it 'works with manager' do
-      ability = MyAbility.new
+      ability = MyAbility.new(:a)
       ability.adjust(:a, MyUserRoleChecker, MyRolePolicies, MyResourceActions)
       %w[Create Read Update Delete].each do |action|
         App.all.each do |app|
@@ -151,13 +32,13 @@ module PickyGuard
     end
 
     it 'fetches records for manager' do
-      ability = MyAbility.new
+      ability = MyAbility.new(:a)
       ability.adjust(:a, MyUserRoleChecker, MyRolePolicies, MyResourceActions)
       expect(App.accessible_by(ability, 'Read').count).to eq(3)
     end
 
     it 'works with reader' do
-      ability = MyAbility.new
+      ability = MyAbility.new(:b)
       ability.adjust(:b, MyUserRoleChecker, MyRolePolicies, MyResourceActions)
       %w[Read].each do |action|
         App.all.each do |app|
@@ -172,7 +53,7 @@ module PickyGuard
     end
 
     it 'should deny unknown action' do
-      ability = MyAbility.new
+      ability = MyAbility.new(:a)
       expect do
         ability.adjust(:a, MyUserRoleChecker, MyRolePolicies3,
                        MyResourceActions)
@@ -181,7 +62,7 @@ module PickyGuard
 
     it 'works with values from current_user' do
       user = OpenStruct.new(val: 1)
-      ability = MyAbility.new
+      ability = MyAbility.new(user)
       ability.adjust(user, MyUserRoleChecker4, MyRolePolicies4, MyResourceActions)
       %w[Create Update Delete Read].each do |action|
         App.all.each do |app|
@@ -189,6 +70,20 @@ module PickyGuard
         end
       end
       expect(App.accessible_by(ability, 'Read').count).to eq(3)
+    end
+
+    it 'loads all resources without whitelist' do
+      ability = MyAbility.new(:a)
+      ability.adjust(:a, MyUserRoleChecker5, MyRolePolicies5, MyResourceActions)
+      expect(App.accessible_by(ability, 'Read').count).to eq(3)
+      expect(Campaign.accessible_by(ability, 'Read').count).to eq(4)
+    end
+
+    it 'does not load resources which is not on whitelist' do
+      ability = MyAbility.new(:a, App)
+      ability.adjust(:a, MyUserRoleChecker5, MyRolePolicies5, MyResourceActions)
+      expect(App.accessible_by(ability, 'Read').count).to eq(3)
+      expect(Campaign.accessible_by(ability, 'Read').count).to eq(0)
     end
   end
 end

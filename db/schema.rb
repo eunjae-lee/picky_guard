@@ -6,4 +6,7 @@ ActiveRecord::Schema.define do
     t.integer 'status2'
     t.integer 'status3'
   end
+
+  create_table 'campaigns', force: true do
+  end
 end

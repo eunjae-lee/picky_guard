@@ -6,6 +6,10 @@ module PickyGuard
   class Loader
     include CanCan::Ability
 
+    def initialize(user, *resources_whitelist)
+      @resources_whitelist = resources_whitelist
+    end
+
     def adjust(user, user_role_checker_class, role_policies_class, resource_actions_class)
       validate_parameters(user_role_checker_class, role_policies_class, resource_actions_class)
       policies = gather_policies(user, user_role_checker_class, role_policies_class.new)
@@ -54,8 +58,19 @@ module PickyGuard
       policies.map { |policy_class| policy_class.new(user) }
               .map do |policy|
                 validate_policy(policy, resource_actions)
-                policy.statements
+                filter_statements(policy.statements)
               end.flatten
+    end
+
+    def filter_statements(statements)
+      return statements unless resource_whitelist?
+      statements.select do |statement|
+        @resources_whitelist.include? statement.resource
+      end
+    end
+
+    def resource_whitelist?
+      !@resources_whitelist.empty?
     end
 
     def validate_policy(policy, resource_actions)
