@@ -7,13 +7,19 @@ module PickyGuard
     include CanCan::Ability
 
     def adjust(user, user_role_checker_class, role_policies_class, resource_actions_class)
-      role_policies = role_policies_class.new
-      policies = gather_policies(user, user_role_checker_class, role_policies)
+      validate_parameters(user_role_checker_class, role_policies_class, resource_actions_class)
+      policies = gather_policies(user, user_role_checker_class, role_policies_class.new)
       statements = gather_statements(user, policies, resource_actions_class.new)
       adjust_statements(statements)
     end
 
     private
+
+    def validate_parameters(user_role_checker_class, role_policies_class, resource_actions_class)
+      raise ArgumentError unless user_role_checker_class < PickyGuard::UserRoleChecker
+      raise ArgumentError unless role_policies_class < PickyGuard::RolePolicies
+      raise ArgumentError unless resource_actions_class < PickyGuard::ResourceActions
+    end
 
     def adjust_statements(statements)
       statements.each do |statement|
