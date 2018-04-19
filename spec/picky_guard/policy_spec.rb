@@ -8,13 +8,12 @@ end
 
 class PolicyA < PickyGuard::Policy
   def initialize(current_user)
-    add_statement(
-      PickyGuard::Statement.allow(
-        %w[Create Read Update],
-        App,
-        status1: 2
-      )
-    )
+    PickyGuard::StatementBuilder.new
+                                .allow
+                                .actions(%w[])
+                                .resource(App)
+                                .conditions(status1: 2)
+                                .build_and_add_to(self)
   end
 end
 
@@ -26,12 +25,20 @@ module PickyGuard
 
     it 'contains statements' do
       policy = Policy.new(@current_user)
-      statement1 = Statement.allow([], App, {})
-      policy.add_statement(statement1)
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[])
+                                  .resource(App)
+                                  .conditions({})
+                                  .build_and_add_to(policy)
       expect(policy.instance_variable_get(:@statements).size).to eq(1)
 
-      statement2 = Statement.allow([], App, {})
-      policy.add_statement(statement2)
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[])
+                                  .resource(App)
+                                  .conditions({})
+                                  .build_and_add_to(policy)
       expect(policy.instance_variable_get(:@statements).size).to eq(2)
     end
 

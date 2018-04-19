@@ -8,21 +8,20 @@ module PickyGuard
 
     EFFECT_ALLOW = :allow
     EFFECT_DENY = :deny
+    EFFECTS = [EFFECT_ALLOW, EFFECT_DENY].freeze
 
-    def initialize(effect, actions, resource, conditions)
+    RESOURCE_TYPE_INSTANCE = :instance
+    RESOURCE_TYPE_CLASS = :class
+
+    # rubocop:disable Metrics/ParameterLists
+    def initialize(effect, actions, resource, conditions, resource_type)
       @effect = effect
       @actions = actions
       @resource = resource
       @conditions = conditions
+      @resource_type = resource_type
     end
-
-    def self.allow(actions, resource, conditions)
-      make_statement(EFFECT_ALLOW, actions, conditions, resource)
-    end
-
-    def self.deny(actions, resource, conditions)
-      make_statement(EFFECT_DENY, actions, conditions, resource)
-    end
+    # rubocop:enable Metrics/ParameterLists
 
     def allow?
       @effect == EFFECT_ALLOW
@@ -30,17 +29,6 @@ module PickyGuard
 
     def deny?
       @effect == EFFECT_DENY
-    end
-
-    def self.make_statement(effect, actions, conditions, resource)
-      validate_parameters(actions, conditions, resource)
-      Statement.new(effect, actions, resource, conditions)
-    end
-
-    def self.validate_parameters(actions, conditions, resource)
-      Validator.validate_all_actions!(actions)
-      Validator.validate_resource_class!(resource)
-      Validator.validate_conditions!(conditions)
     end
   end
 end

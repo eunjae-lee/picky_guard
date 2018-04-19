@@ -47,6 +47,10 @@ module PickyGuard
       child_class < parent_class
     end
 
+    def self.valid_effect?(effect)
+      PickyGuard::Statement::EFFECTS.include? effect
+    end
+
     def self.validate_statement!(statement)
       raise ArgumentError, 'Invalid Statement' unless Validator.valid_statement?(statement)
     end
@@ -69,6 +73,10 @@ module PickyGuard
 
     def self.validate_conditions!(conditions)
       raise ArgumentError, 'Invalid conditions' unless Validator.valid_conditions?(conditions)
+    end
+
+    def self.validate_effect!(effect)
+      raise ArgumentError, 'Invalid effect' unless Validator.valid_effect?(effect)
     end
   end
 end
