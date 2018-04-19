@@ -9,6 +9,6 @@ require 'picky_guard/loader'
 
 class Ability < PickyGuard::Loader
   def initialize(user)
-    adjust(user, UserRoleChecker, RolePolicies, ResourceActions)
+    adjust(user, UserRoleChecker, ResourceActions, RolePolicies)
   end
 end

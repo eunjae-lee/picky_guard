@@ -10,8 +10,8 @@ module PickyGuard
       @resources_whitelist = resources_whitelist
     end
 
-    def adjust(user, user_role_checker_class, role_policies_class, resource_actions_class)
-      validate_parameters(user_role_checker_class, role_policies_class, resource_actions_class)
+    def adjust(user, user_role_checker_class, resource_actions_class, role_policies_class)
+      validate_parameters(user_role_checker_class, resource_actions_class, role_policies_class)
       policies = gather_policies(user, user_role_checker_class, role_policies_class.new)
       statements = gather_statements(user, policies, resource_actions_class.new)
       adjust_statements(statements)
@@ -19,7 +19,7 @@ module PickyGuard
 
     private
 
-    def validate_parameters(user_role_checker_class, role_policies_class, resource_actions_class)
+    def validate_parameters(user_role_checker_class, resource_actions_class, role_policies_class)
       raise ArgumentError unless user_role_checker_class < PickyGuard::UserRoleChecker
       raise ArgumentError unless role_policies_class < PickyGuard::RolePolicies
       raise ArgumentError unless resource_actions_class < PickyGuard::ResourceActions

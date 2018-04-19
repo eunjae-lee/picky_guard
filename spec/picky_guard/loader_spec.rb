@@ -23,7 +23,7 @@ module PickyGuard
 
     it 'works with manager' do
       ability = MyAbility.new(:a)
-      ability.adjust(:a, MyUserRoleChecker, MyRolePolicies, MyResourceActions)
+      ability.adjust(:a, MyUserRoleChecker, MyResourceActions, MyRolePolicies)
       %w[Create Read Update Delete].each do |action|
         App.all.each do |app|
           expect(ability.can?(action, app)).to be_truthy
@@ -33,13 +33,13 @@ module PickyGuard
 
     it 'fetches records for manager' do
       ability = MyAbility.new(:a)
-      ability.adjust(:a, MyUserRoleChecker, MyRolePolicies, MyResourceActions)
+      ability.adjust(:a, MyUserRoleChecker, MyResourceActions, MyRolePolicies)
       expect(App.accessible_by(ability, 'Read').count).to eq(3)
     end
 
     it 'works with reader' do
       ability = MyAbility.new(:b)
-      ability.adjust(:b, MyUserRoleChecker, MyRolePolicies, MyResourceActions)
+      ability.adjust(:b, MyUserRoleChecker, MyResourceActions, MyRolePolicies)
       %w[Read].each do |action|
         App.all.each do |app|
           expect(ability.can?(action, app)).to be_truthy
@@ -55,15 +55,14 @@ module PickyGuard
     it 'should deny unknown action' do
       ability = MyAbility.new(:a)
       expect do
-        ability.adjust(:a, MyUserRoleChecker, MyRolePolicies3,
-                       MyResourceActions)
+        ability.adjust(:a, MyUserRoleChecker, MyResourceActions, MyRolePolicies3)
       end.to raise_error(RuntimeError)
     end
 
     it 'works with values from current_user' do
       user = OpenStruct.new(val: 1)
       ability = MyAbility.new(user)
-      ability.adjust(user, MyUserRoleChecker4, MyRolePolicies4, MyResourceActions)
+      ability.adjust(user, MyUserRoleChecker4, MyResourceActions, MyRolePolicies4)
       %w[Create Update Delete Read].each do |action|
         App.all.each do |app|
           expect(ability.can?(action, app)).to be_truthy
@@ -74,14 +73,14 @@ module PickyGuard
 
     it 'loads all resources without whitelist' do
       ability = MyAbility.new(:a)
-      ability.adjust(:a, MyUserRoleChecker5, MyRolePolicies5, MyResourceActions)
+      ability.adjust(:a, MyUserRoleChecker5, MyResourceActions, MyRolePolicies5)
       expect(App.accessible_by(ability, 'Read').count).to eq(3)
       expect(Campaign.accessible_by(ability, 'Read').count).to eq(4)
     end
 
     it 'does not load resources which is not on whitelist' do
       ability = MyAbility.new(:a, App)
-      ability.adjust(:a, MyUserRoleChecker5, MyRolePolicies5, MyResourceActions)
+      ability.adjust(:a, MyUserRoleChecker5, MyResourceActions, MyRolePolicies5)
       expect(App.accessible_by(ability, 'Read').count).to eq(3)
       expect(Campaign.accessible_by(ability, 'Read').count).to eq(0)
     end
