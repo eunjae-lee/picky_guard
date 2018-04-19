@@ -2,11 +2,11 @@
 
 module PickyGuard
   module Generators
-    class PickyGuardGenerator < Rails::Generators::Base
+    class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path('../templates', __FILE__)
 
       # rubocop:disable Metrics/LineLength
-      def generate_picky_guard
+      def generate_install
         copy_file 'ability.rb', 'app/models/ability.rb'
         copy_file 'role_policies.rb', 'app/picky_guard/role_policies.rb'
         copy_file 'sample_policy.rb', 'app/picky_guard/policies/sample_policy.rb'
