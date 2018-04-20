@@ -48,10 +48,6 @@ module PickyGuard
       PickyGuard::Statement.new(@effect, @actions, _resource, _conditions, _resource_type)
     end
 
-    def build_and_add_to(policy)
-      policy.add_statement(build)
-    end
-
     private
 
     def validate_resource_and_conditions!

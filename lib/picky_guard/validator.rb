@@ -53,30 +53,37 @@ module PickyGuard
 
     def self.validate_statement!(statement)
       raise ArgumentError, 'Invalid Statement' unless Validator.valid_statement?(statement)
+      statement
     end
 
     def self.validate_resource_class!(resource)
       raise ArgumentError, 'Invalid Resource' unless Validator.valid_resource_class?(resource)
+      resource
     end
 
     def self.validate_all_actions!(actions)
       raise ArgumentError, 'Invalid actions' unless Validator.all_valid_actions?(actions)
+      actions
     end
 
     def self.validate_all_policy_classes!(policies)
       raise ArgumentError, 'Invalid policies' unless Validator.all_valid_policy_classes?(policies)
+      policies
     end
 
     def self.validate_role!(role)
       raise ArgumentError, 'Invalid roles' unless Validator.valid_role?(role)
+      role
     end
 
     def self.validate_conditions!(conditions)
       raise ArgumentError, 'Invalid conditions' unless Validator.valid_conditions?(conditions)
+      conditions
     end
 
     def self.validate_effect!(effect)
       raise ArgumentError, 'Invalid effect' unless Validator.valid_effect?(effect)
+      effect
     end
   end
 end

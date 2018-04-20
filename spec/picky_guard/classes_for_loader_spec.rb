@@ -42,23 +42,27 @@ end
 
 class AppFullAccess < PickyGuard::Policy
   def initialize(current_user)
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Create Read Update Delete])
-                                .resource(App)
-                                .conditions({})
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Create Read Update Delete])
+                                  .resource(App)
+                                  .conditions({})
+                                  .build
+    })
   end
 end
 
 class AppReadAccess < PickyGuard::Policy
   def initialize(current_user)
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Read])
-                                .resource(App)
-                                .conditions({})
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Read])
+                                  .resource(App)
+                                  .conditions({})
+                                  .build
+    })
   end
 end
 
@@ -71,23 +75,27 @@ end
 
 class AppFullAccess2 < PickyGuard::Policy
   def initialize(current_user)
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Create Read Update Delete])
-                                .resource(App)
-                                .conditions({})
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Create Read Update Delete])
+                                  .resource(App)
+                                  .conditions({})
+                                  .build
+    })
   end
 end
 
 class AppReadAccess2 < PickyGuard::Policy
   def initialize(current_user)
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Read])
-                                .resource(App)
-                                .conditions({})
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Read])
+                                  .resource(App)
+                                  .conditions({})
+                                  .build
+    })
   end
 end
 
@@ -99,12 +107,14 @@ end
 
 class AppFullAccess3 < PickyGuard::Policy
   def initialize(current_user)
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Create Read Update Delete UnknownWeirdAction])
-                                .resource(App)
-                                .conditions({})
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Create Read Update Delete UnknownWeirdAction])
+                                  .resource(App)
+                                  .conditions({})
+                                  .build
+    })
   end
 end
 
@@ -122,12 +132,14 @@ end
 
 class AppFullAccess4 < PickyGuard::Policy
   def initialize(current_user)
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Create Read Update Delete])
-                                .resource(App)
-                                .conditions(status1: current_user.val)
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Create Read Update Delete])
+                                  .resource(App)
+                                  .conditions(status1: current_user.val)
+                                  .build
+    })
   end
 end
 
@@ -145,19 +157,23 @@ end
 
 class AppFullAccess5 < PickyGuard::Policy
   def initialize(current_user)
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Create Read Update Delete])
-                                .resource(App)
-                                .conditions({})
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Create Read Update Delete])
+                                  .resource(App)
+                                  .conditions({})
+                                  .build
+    })
 
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Create Read Update Delete])
-                                .resource(Campaign)
-                                .conditions({})
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Create Read Update Delete])
+                                  .resource(Campaign)
+                                  .conditions({})
+                                  .build
+    })
   end
 end
 
@@ -177,16 +193,20 @@ class AppFullAccess6 < PickyGuard::Policy
   # resource App, Campaign
 
   def initialize(current_user)
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Read])
-                                .class_resource(App)
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Read])
+                                  .class_resource(App)
+                                  .build
+    })
 
-    PickyGuard::StatementBuilder.new
-                                .allow
-                                .actions(%w[Create])
-                                .class_resource(Campaign)
-                                .build_and_add_to(self)
+    register(App, proc {
+      PickyGuard::StatementBuilder.new
+                                  .allow
+                                  .actions(%w[Create])
+                                  .class_resource(Campaign)
+                                  .build
+    })
   end
 end
