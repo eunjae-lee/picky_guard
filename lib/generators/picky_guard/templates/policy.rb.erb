@@ -4,12 +4,19 @@ require 'picky_guard/policy'
 
 class <%= class_name %> < PickyGuard::Policy
   def initialize(current_user)
-    # add_statement(
-    #   PickyGuard::Statement.allow(
-    #       %w(Create Read Update Delete),
-    #       Report,
-    #       { company: current_user.company }
-    #   )
-    # )
+    # register(App, proc {
+    #   PickyGuard::StatementBuilder.new
+    #       .allow
+    #       .actions(%w[Create Read Update Delete])
+    #       .resource(App)
+    #       .conditions({})
+    #       .build
+    # })
+
+    # register(Campaign, PickyGuard::StatementBuilder.new
+    #                                                .allow
+    #                                                .actions(%w[Create])
+    #                                                .class_resource(Campaign)
+    #                                                .build)
   end
 end

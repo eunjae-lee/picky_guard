@@ -197,7 +197,7 @@ class AppFullAccess6 < PickyGuard::Policy
                                               .class_resource(App)
                                               .build)
 
-    register(App, proc {
+    register(Campaign, proc {
       PickyGuard::StatementBuilder.new
                                   .allow
                                   .actions(%w[Create])
