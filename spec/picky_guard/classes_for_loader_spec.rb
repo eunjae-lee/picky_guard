@@ -166,7 +166,7 @@ class AppFullAccess5 < PickyGuard::Policy
                                   .build
     })
 
-    register(App, proc {
+    register(Campaign, proc {
       PickyGuard::StatementBuilder.new
                                   .allow
                                   .actions(%w[Create Read Update Delete])

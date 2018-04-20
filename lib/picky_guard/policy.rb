@@ -13,17 +13,23 @@ module PickyGuard
       @cached_statements = nil
     end
 
-    def statements
-      @cached_statements ||= gather_statements
+    def statements(resource_whitelist)
+      @cached_statements ||= gather_statements(resource_whitelist)
     end
 
     private
 
-    def gather_statements
-      safe_array.map do |resource, statement_or_proc|
+    def gather_statements(resource_whitelist)
+      filtered_array(resource_whitelist).map do |_resource, statement_or_proc|
         statement = get_statement(statement_or_proc)
         Validator.validate_statement!(statement)
       end
+    end
+
+    def filtered_array(resource_whitelist)
+      return safe_array if resource_whitelist.empty?
+
+      safe_array.select { |item| resource_whitelist.include? item[0] }
     end
 
     def get_statement(statement_or_proc)

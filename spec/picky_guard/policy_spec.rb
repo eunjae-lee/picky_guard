@@ -35,7 +35,7 @@ module PickyGuard
                                     .conditions({})
                                     .build
       })
-      expect(policy.send(:statements).size).to eq(1)
+      expect(policy.send(:statements, []).size).to eq(1)
 
       policy.register(App, proc {
         PickyGuard::StatementBuilder.new
@@ -45,7 +45,7 @@ module PickyGuard
                                     .conditions({})
                                     .build
       })
-      expect(policy.send(:statements).size).to eq(2)
+      expect(policy.send(:statements, []).size).to eq(2)
     end
 
     it 'passes validator' do

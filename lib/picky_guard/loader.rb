@@ -60,33 +60,24 @@ module PickyGuard
     def gather_statements(user, policies, resource_actions)
       policies.map { |policy_class| policy_class.new(user) }
               .map do |policy|
-                validate_policy(policy, resource_actions)
-                filter_statements(policy.statements)
+                statements = policy.statements(@resources_whitelist)
+                validate_statements!(resource_actions, statements)
               end.flatten
     end
 
-    def filter_statements(statements)
-      return statements unless resource_whitelist?
-      statements.select do |statement|
-        @resources_whitelist.include? statement.resource
+    def validate_statements!(resource_actions, statements)
+      statements.each do |statement|
+        validate_statement!(resource_actions, statement)
       end
+      statements
     end
 
-    def resource_whitelist?
-      !@resources_whitelist.empty?
-    end
-
-    def validate_policy(policy, resource_actions)
-      policy.statements.each do |statement|
-        validate_statement(resource_actions, statement)
-      end
-    end
-
-    def validate_statement(resource_actions, statement)
+    def validate_statement!(resource_actions, statement)
       statement.actions.each do |action|
         valid = resource_actions.action_exist?(statement.resource, action)
         raise 'Unknown action!' unless valid
       end
+      statement
     end
   end
 end
