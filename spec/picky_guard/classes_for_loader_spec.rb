@@ -190,8 +190,6 @@ class MyRolePolicies6 < PickyGuard::RolePolicies
 end
 
 class AppFullAccess6 < PickyGuard::Policy
-  # resource App, Campaign
-
   def initialize(current_user)
     register(App, PickyGuard::StatementBuilder.new
                                               .allow
