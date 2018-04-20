@@ -33,14 +33,17 @@ module PickyGuard
 
     def adjust_statement(statement)
       statement.actions.each do |action|
-        rule = build_rule(action, statement.effect, statement.conditions,
-                          statement.resource)
+        rule = build_rule(action, statement)
         add_rule(rule)
       end
     end
 
-    def build_rule(action, effect, conditions, resource)
-      CanCan::Rule.new(positive?(effect), action, resource, conditions, nil)
+    def build_rule(action, statement)
+      if statement.resource_type == Statement::RESOURCE_TYPE_INSTANCE
+        CanCan::Rule.new(positive?(statement.effect), action, statement.resource, statement.conditions, nil)
+      elsif statement.resource_type == Statement::RESOURCE_TYPE_CLASS
+        CanCan::Rule.new(positive?(statement.effect), action, statement.resource, nil, nil)
+      end
     end
 
     def positive?(effect)

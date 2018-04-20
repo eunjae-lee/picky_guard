@@ -179,9 +179,8 @@ class AppFullAccess6 < PickyGuard::Policy
   def initialize(current_user)
     PickyGuard::StatementBuilder.new
                                 .allow
-                                .actions(%w[])
+                                .actions(%w[Read])
                                 .class_resource(App)
-                                .conditions({})
                                 .build_and_add_to(self)
 
     PickyGuard::StatementBuilder.new

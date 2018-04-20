@@ -55,8 +55,8 @@ module PickyGuard
     private
 
     def validate_resource_and_conditions!
-      raise ArgumentError, 'Invalid conditions' if @resource && @conditions.nil?
-      raise ArgumentError, 'Invalid resource' if @resource.nil? && @conditions
+      raise ArgumentError, 'Resource without conditions' if @resource && @conditions.nil?
+      raise ArgumentError, 'Conditions without resource' if @resource.nil? && @conditions
     end
 
     def validate_existence_of_resource_and_class_resource!

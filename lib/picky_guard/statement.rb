@@ -4,7 +4,7 @@ require 'picky_guard/validator'
 
 module PickyGuard
   class Statement
-    attr_reader :effect, :actions, :resource, :conditions
+    attr_reader :effect, :actions, :resource, :conditions, :resource_type
 
     EFFECT_ALLOW = :allow
     EFFECT_DENY = :deny

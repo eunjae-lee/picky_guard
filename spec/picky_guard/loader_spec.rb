@@ -84,14 +84,15 @@ module PickyGuard
       expect(App.accessible_by(ability, 'Read').count).to eq(3)
       expect(Campaign.accessible_by(ability, 'Read').count).to eq(0)
     end
-    #
-    # it 'does not have permission on resource class without any config' do
-    #   ability = MyAbility.new(:a)
-    #   ability.adjust(:a, MyUserRoleChecker6, MyResourceActions, MyRolePolicies6)
-    #   expect(ability.can?('Read', App)).to be_falsey
-    #   expect(ability.can?('Read', App.first)).to be_falsey
-    #   expect(ability.can?('Read', Campaign)).to be_truthy
-    #   expect(ability.can?('Read', Campaign.first)).to be_falsey
-    # end
+
+    it 'does not have permission on resource class without any config' do
+      ability = MyAbility.new(:a)
+      ability.adjust(:a, MyUserRoleChecker6, MyResourceActions, MyRolePolicies6)
+      expect(ability.can?('Create', App)).to be_falsey
+      expect(ability.can?('Create', App.first)).to be_falsey
+      expect(ability.can?('Create', Campaign)).to be_truthy
+      expect(ability.can?('Create', Campaign.first)).to be_truthy
+      expect(ability.can?('Create', Campaign.second)).to be_truthy
+    end
   end
 end
