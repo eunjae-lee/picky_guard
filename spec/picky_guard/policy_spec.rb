@@ -8,14 +8,10 @@ end
 
 class PolicyA < PickyGuard::Policy
   def initialize(current_user)
-    register(App, proc {
-      PickyGuard::StatementBuilder.new
-                                  .allow
-                                  .actions(%w[])
-                                  .resource(App)
-                                  .conditions(status1: 2)
-                                  .build
-    })
+    statement_for App do
+      actions %w[]
+      conditions status1: 2
+    end
   end
 end
 
@@ -27,24 +23,16 @@ module PickyGuard
 
     it 'contains statements' do
       policy = Policy.new(@current_user)
-      policy.register(App, proc {
-        PickyGuard::StatementBuilder.new
-                                    .allow
-                                    .actions(%w[])
-                                    .resource(App)
-                                    .conditions({})
-                                    .build
-      })
+      policy.statement_for App do
+        actions %w[]
+        conditions({})
+      end
       expect(policy.send(:statements, []).size).to eq(1)
 
-      policy.register(App, proc {
-        PickyGuard::StatementBuilder.new
-                                    .allow
-                                    .actions(%w[])
-                                    .resource(App)
-                                    .conditions({})
-                                    .build
-      })
+      policy.statement_for App do
+        actions %w[]
+        conditions({})
+      end
       expect(policy.send(:statements, []).size).to eq(2)
     end
 

@@ -4,7 +4,7 @@ require 'picky_guard/validator'
 
 module PickyGuard
   class Statement
-    attr_reader :effect, :actions, :resource, :conditions, :resource_type
+    attr_reader :effect, :actions, :resource, :conditions
 
     EFFECT_ALLOW = :allow
     EFFECT_DENY = :deny
@@ -13,15 +13,12 @@ module PickyGuard
     RESOURCE_TYPE_INSTANCE = :instance
     RESOURCE_TYPE_CLASS = :class
 
-    # rubocop:disable Metrics/ParameterLists
-    def initialize(effect, actions, resource, conditions, resource_type)
+    def initialize(effect, actions, resource, conditions)
       @effect = effect
       @actions = actions
       @resource = resource
       @conditions = conditions
-      @resource_type = resource_type
     end
-    # rubocop:enable Metrics/ParameterLists
 
     def allow?
       @effect == EFFECT_ALLOW

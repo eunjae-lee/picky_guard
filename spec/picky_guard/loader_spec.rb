@@ -94,5 +94,11 @@ module PickyGuard
       expect(ability.can?('Create', Campaign.first)).to be_truthy
       expect(ability.can?('Create', Campaign.second)).to be_truthy
     end
+
+    it 'loads apps with condition of proc' do
+      ability = MyAbility.new(:a)
+      ability.adjust(:a, MyUserRoleChecker7, MyResourceActions, MyRolePolicies7)
+      expect(App.accessible_by(ability, 'Read').size).to eq(3)
+    end
   end
 end

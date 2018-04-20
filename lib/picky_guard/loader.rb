@@ -39,10 +39,15 @@ module PickyGuard
     end
 
     def build_rule(action, statement)
-      if statement.resource_type == Statement::RESOURCE_TYPE_INSTANCE
-        CanCan::Rule.new(positive?(statement.effect), action, statement.resource, statement.conditions, nil)
-      elsif statement.resource_type == Statement::RESOURCE_TYPE_CLASS
-        CanCan::Rule.new(positive?(statement.effect), action, statement.resource, nil, nil)
+      conditions = eval_conditions_if_needed(statement)
+      CanCan::Rule.new(positive?(statement.effect), action, statement.resource, conditions, nil)
+    end
+
+    def eval_conditions_if_needed(statement)
+      if statement.conditions.is_a? Proc
+        statement.conditions.call
+      else
+        statement.conditions
       end
     end
 

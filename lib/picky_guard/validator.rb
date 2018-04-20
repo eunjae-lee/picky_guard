@@ -40,7 +40,7 @@ module PickyGuard
     end
 
     def self.valid_conditions?(conditions)
-      conditions.instance_of?(Hash)
+      conditions.instance_of?(Hash) || conditions.instance_of?(Proc)
     end
 
     def self.child_and_parent?(child_class, parent_class)
