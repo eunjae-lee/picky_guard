@@ -15,7 +15,7 @@ module PickyGuard
       private
 
       def dest_path(name)
-        "app/picky_guard/#{name}.rb"
+        "app/picky_guard/policies/#{name}.rb"
       end
 
       def content(name)
