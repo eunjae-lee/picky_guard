@@ -193,13 +193,11 @@ class AppFullAccess6 < PickyGuard::Policy
   # resource App, Campaign
 
   def initialize(current_user)
-    register(App, proc {
-      PickyGuard::StatementBuilder.new
-                                  .allow
-                                  .actions(%w[Read])
-                                  .class_resource(App)
-                                  .build
-    })
+    register(App, PickyGuard::StatementBuilder.new
+                                              .allow
+                                              .actions(%w[Read])
+                                              .class_resource(App)
+                                              .build)
 
     register(App, proc {
       PickyGuard::StatementBuilder.new
