@@ -119,13 +119,18 @@ The generated file is like this:
 ```ruby
 class RolePolicies < PickyGuard::RolePolicies
   def initialize
-    map(:role_report_manager, [ManageAllReports])
-    # map(:role_report_reader, [AnotherPolicy])
+    map(:report_manager, [ManageAllReports])
+    # map(:report_reader, [AnotherPolicy])
   end
 end
 ```
 
-This class defines which role has which policies. From the example code above, we could assume there is a role named `:role_report_manager` and it has one policy named `ManageAllReports`.
+This class defines which role has which policies. The method `map` takes two parameters.
+
+1. `role` : It can be a string or a symbol
+2. `policies` : An array of policies
+
+From the example code above, we could assume there is a role named `:report_manager` and it has one policy named `ManageAllReports`.
 
 Then how do we define policy?
 
