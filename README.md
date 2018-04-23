@@ -147,24 +147,24 @@ The generated file is like this:
 ```ruby
 class ManageAllReports < PickyGuard::Policy
   def initialize(current_user)
-    register(Campaign, PickyGuard::StatementBuilder.new
-                                                   .allow
-                                                   .actions(%w[Create])
-                                                   .resource(Campaign)
-                                                   .conditions({})
-                                                   .build)
-    register(Campaign, PickyGuard::StatementBuilder.new
-                                                   .allow
-                                                   .actions(%w[Create])
-                                                   .class_resource(Campaign)
-                                                   .build)
+    statement_for Campaign do
+      allow
+      actions ['Create']
+      conditions({})
+    end
+
+    statement_for Campaign do
+      allow
+      actions ['Create']
+      class_resource
+    end
   end
 end
 ```
 
-`register` method takes two parameters
-* A Resource class. It should be a class extending `ActiveRecord::Base`.
-* An instance of `PickyGuard::Statement`. It's built by `PickyGuard::StatementBuilder`.
+`register` method takes a parameter and a block.
+* The parameter is a Resource class. It should extend `ActiveRecord::Base`.
+* The block consists of simple DSL, describing the statement.
 
 ### Building Statement
 
@@ -184,12 +184,49 @@ In case of `resource`, we need
 * resource
 * conditions
 
+```ruby
+statement_for Campaign do
+  allow                  # This could be `deny`. You can omit it, and by default it's `allow`.
+  actions ['Create']     # Array of `string` or `symbol`.
+  instance_resource      # You can omit this, and by default it's an instance resource.
+  conditions({})
+end
+```
+
+In a short way,
+
+```ruby
+statement_for Campaign do
+  actions ['Create']
+  conditions({})
+end
+```
+
 In case of `class resource`, we need
 * effect
 * actions
 * class_resource
 
-### `conditions` on resource
+```ruby
+statement_for Campaign do
+  allow                # This could be `deny`. You can omit it, and by default it's `allow`.
+  actions ['Create']   # Array of `string` or `symbol`.
+  class_resource       # If it's a class resource, then you should explicitly declare that.
+end
+```
+
+You cannot specify any conditions on class resource.
+
+In a short way,
+
+```ruby
+statement_for Campaign do
+  actions ['Create']
+  class_resource
+end
+```
+
+### `conditions` on instance resource
 
 `conditions` is a hash. This is directly used to query database, so it should be real database column names. You can refer to `Hash of Conditions` section from [Defining Abilities - CanCanCan](https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities#hash-of-conditions).
 
@@ -197,12 +234,10 @@ When conditions are too complicated and you cannot express it in a hash, then th
 
 ```ruby
 ids = extract_campaign_ids_somehow
-register(Campaign, PickyGuard::StatementBuilder.new
-                                               .allow
-                                               .actions(%w[Create])
-                                               .resource(Campaign)
-                                               .conditions({ id: ids })
-                                               .build)
+statement_for Campaign do
+  actions ['Create']
+  conditions({ id: ids })
+end
 ```
 
 First, you can extract ids or other values through some complicated business logic of yours. Then, pass it to conditions like the above.
@@ -210,18 +245,17 @@ First, you can extract ids or other values through some complicated business log
 However we can make this better by wrapping the statement building code with `proc`. This enables lazy-loading.
 
 ```ruby
-register(Campaign, proc {
-  ids = extract_campaign_ids_somehow
-  PickyGuard::StatementBuilder.new
-                              .allow
-                              .actions(%w[Create])
-                              .resource(Campaign)
-                              .conditions({ id: ids })
-                              .build
-})
+statement_for Campaign do
+  actions ['Create']
+  conditions(proc {
+    ids = extract_campaign_ids_somehow
+
+    { id: ids}
+  })
+end
 ```
 
-So basically this `register` method takes `a statement` or `a proc returning statement` as 2nd parameter.
+So basically this `conditions` method takes `a hash` or `a proc returning a hash` as a parameter.
 
 ## Using `Ability`
 
