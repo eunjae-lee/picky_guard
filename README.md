@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/picky_guard.svg)](https://badge.fury.io/rb/picky_guard)
+
 # PickyGuard
 
 PickyGuard is an opinionated authorization library which wraps [CanCanCan](https://github.com/CanCanCommunity/cancancan).
