@@ -10,9 +10,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Eunjae Lee']
   spec.email         = ['karis612@gmail.com']
 
-  spec.summary       = 'PickyGuard provides better Roll-Based Access Control.'
+  spec.summary       = 'PickyGuard is an opinionated authorization library.'
   spec.description   = spec.description
-  # spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = 'https://github.com/eunjae-lee/picky_guard'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
