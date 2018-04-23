@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     picky_guard (0.1.0)
-      activerecord
-      cancancan
+      activerecord (>= 4.2)
+      cancancan (>= 2.0)
 
 GEM
   remote: https://rubygems.org/
