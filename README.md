@@ -103,7 +103,7 @@ The generated file is like this:
 ```ruby
 class ResourceActions < PickyGuard::ResourceActions
   def initialize
-    map(Report, [:create, :read, :update, :delete])
+    map Report, [:create, :read, :update, :delete]
   end
 end
 ```
@@ -119,8 +119,8 @@ The generated file is like this:
 ```ruby
 class RolePolicies < PickyGuard::RolePolicies
   def initialize
-    map(:report_manager, [ManageAllReports])
-    # map(:report_reader, [AnotherPolicy])
+    map :report_manager, [ManageAllReports]
+    # map :report_reader, [AnotherPolicy]
   end
 end
 ```
