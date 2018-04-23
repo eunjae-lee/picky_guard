@@ -1,5 +1,7 @@
 [![Gem Version](https://badge.fury.io/rb/picky_guard.svg)](https://badge.fury.io/rb/picky_guard)
 
+[![Build Status](https://travis-ci.org/eunjae-lee/picky_guard.svg?branch=master)](https://travis-ci.org/eunjae-lee/picky_guard)
+
 # PickyGuard
 
 PickyGuard is an opinionated authorization library which wraps [CanCanCan](https://github.com/CanCanCommunity/cancancan).
