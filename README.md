@@ -81,7 +81,7 @@ class UserRoleChecker < PickyGuard::UserRoleChecker
 end
 ```
 
-This class defines the way to check if user has specific role. It assumes you already have received some roles before.
+This class defines the way to check if user has specific role. It assumes some roles already have been given to the user somehow.
 
 You can implement this on your own, or if you're using a gem like [rolify](https://github.com/RolifyCommunity/rolify), then it should be like this:
 
@@ -100,12 +100,12 @@ The generated file is like this:
 ```ruby
 class ResourceActions < PickyGuard::ResourceActions
   def initialize
-    map(Report, %w[Create Read Update Delete])
+    map(Report, [:create, :read, :update, :delete])
   end
 end
 ```
 
-This class defines which resource can have which actions. Actions can be either `String` or `Symbol`.
+This class defines which resource can have which actions. Actions can be an array of either `String` or `Symbol`.
 
 By defining this, you can explicitly manage list of actions per resource and filter out unexpected and unknown actions.
 
@@ -122,7 +122,7 @@ class RolePolicies < PickyGuard::RolePolicies
 end
 ```
 
-This class defines which role has which policies. From the code above, there is a role named `:role_report_manager` and it has one policy named `ManageAllReports`.
+This class defines which role has which policies. From the example code above, we could assume there is a role named `:role_report_manager` and it has one policy named `ManageAllReports`.
 
 Then how do we define policy?
 
@@ -136,13 +136,15 @@ $ rails generate picky_guard:policy manage_all_reports
 
 From the command line, name should be underscored. Otherwise, it will raise an error.
 
+Once created, you will find the policy file under `app/picky_guard/policies/`.
+
 If you get to have many policies, you can group them into a folder like this:
 
 ```
 $ rails generate picky_guard:policy reports/manage_all_reports
 ```
 
-Once created, you will find the policy file under `app/picky_guard/policies/`.
+Then it will generate `app/picky_guard/policies/reports/manage_all_reports.rb`.
 
 The generated file is like this:
 
@@ -151,13 +153,13 @@ class ManageAllReports < PickyGuard::Policy
   def initialize(current_user)
     statement_for Campaign do
       allow
-      actions ['Create']
+      actions [:create]
       conditions({})
     end
 
     statement_for Campaign do
       allow
-      actions ['Create']
+      actions [:create]
       class_resource
     end
   end
@@ -165,12 +167,12 @@ end
 ```
 
 `register` method takes a parameter and a block.
-* The parameter is a Resource class. It should extend `ActiveRecord::Base`.
+* The parameter is a resource class. It should extend `ActiveRecord::Base`.
 * The block consists of simple DSL, describing the statement.
 
 ### Building Statement
 
-There are two types of resources: instance resource and class resource.
+There are two types of resources: `instance resource` and `class resource`.
 
 ```ruby
 can? :read, Campaign.first    # Checking permission against an instance resource
@@ -178,19 +180,18 @@ can? :read, Campaign.first    # Checking permission against an instance resource
 can? :create, Campaign        # Checking permission against a class resource
 ```
 
-We use `instance resource` a lot more than `class resource`, so let's just call it `resource`.
+### Instance Resource
 
-In case of `resource`, we need
-* effect(allow or deny)
+In case of `instance resource`, we need
+* effect(`allow` or `deny`)
 * actions
-* resource
 * conditions
 
 ```ruby
-statement_for Campaign do
-  allow                  # This could be `deny`. You can omit it, and by default it's `allow`.
-  actions ['Create']     # Array of `string` or `symbol`.
-  instance_resource      # You can omit this, and by default it's an instance resource.
+statement_for Campaign do  # Instances of `Campaign` are the resources.
+  allow                    # Possibly `deny` instead of `allow`. If omitted, it's `allow` by default.
+  actions [:create]        # Array of `string` or `symbol`.
+  instance_resource        # If omitted, it's an instance resource by default.
   conditions({})
 end
 ```
@@ -199,10 +200,12 @@ In a short way,
 
 ```ruby
 statement_for Campaign do
-  actions ['Create']
+  actions [:create]
   conditions({})
 end
 ```
+
+### Class Resource
 
 In case of `class resource`, we need
 * effect
@@ -210,10 +213,10 @@ In case of `class resource`, we need
 * class_resource
 
 ```ruby
-statement_for Campaign do
-  allow                # This could be `deny`. You can omit it, and by default it's `allow`.
-  actions ['Create']   # Array of `string` or `symbol`.
-  class_resource       # If it's a class resource, then you should explicitly declare that.
+statement_for Campaign do  # `Campaign` is the resource.
+  allow                    # Possibly `deny` instead of `allow`. If omitted, it's `allow` by default.
+  actions [:create]        # Array of `string` or `symbol`.
+  class_resource           # You need this explicit declaration when it comes to a class resource.
 end
 ```
 
@@ -223,7 +226,7 @@ In a short way,
 
 ```ruby
 statement_for Campaign do
-  actions ['Create']
+  actions [:create]
   class_resource
 end
 ```
@@ -232,27 +235,27 @@ end
 
 `conditions` is a hash. This is directly used to query database, so it should be real database column names. You can refer to `Hash of Conditions` section from [Defining Abilities - CanCanCan](https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities#hash-of-conditions).
 
-When conditions are too complicated and you cannot express it in a hash, then there's another option.
+When things are too complicated and it's hard to express it a hash, then there's a little detour.
 
 ```ruby
 ids = extract_campaign_ids_somehow
 statement_for Campaign do
-  actions ['Create']
+  actions [:create]
   conditions({ id: ids })
 end
 ```
 
 First, you can extract ids or other values through some complicated business logic of yours. Then, pass it to conditions like the above.
 
-However we can make this better by wrapping the statement building code with `proc`. This enables lazy-loading.
+However we can make this better by wrapping the conditions with `proc`. This enables lazy-loading.
 
 ```ruby
 statement_for Campaign do
-  actions ['Create']
+  actions [:create]
   conditions(proc {
     ids = extract_campaign_ids_somehow
 
-    { id: ids}
+    { id: ids }
   })
 end
 ```
@@ -261,7 +264,7 @@ So basically this `conditions` method takes `a hash` or `a proc returning a hash
 
 ## Using `Ability`
 
-You can use `Ability` class just as you did with `CanCanCan`. The constructor takes one parameter of `user`.
+You can use `Ability` class just as you did with `CanCanCan`. The constructor takes one parameter: `user`.
 
 With `PickyGuard`, you can pass optional second parameter which is `resource`.
 
