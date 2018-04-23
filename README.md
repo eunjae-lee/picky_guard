@@ -1,13 +1,13 @@
 # PickyGuard
 
-PickyGuard is an opinionated authorization library which is wrapping [CanCanCan](https://github.com/CanCanCommunity/cancancan).
+PickyGuard is an opinionated authorization library which wraps [CanCanCan](https://github.com/CanCanCommunity/cancancan).
 
 This library helps to write authorization policies in an opinionated hierarchy.
 
 Briefly,
-* *User* has many *roles*.
-* Each *role* has many *policies*.
-* Each *policy* has many *statements* describing which *actions* has what *effect* on which *resources*.
+* **User** has many **roles**.
+* Each **role** has many **policies**.
+* Each **policy** has many **statements** describing which **actions** has what **effect** on which **resources**.
 
 For example,
 * User `Paul` has a role named `CampaignManager`.
