@@ -1,0 +1,5 @@
+sudo: false
+os: osx
+language: ruby
+rvm:
+  - 2.4.1
