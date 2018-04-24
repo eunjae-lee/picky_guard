@@ -17,6 +17,14 @@ module PickyGuard
       adjust_statements(statements)
     end
 
+    def can(_action = nil, _subject = nil, _conditions = nil, &_block)
+      raise 'You cannot use `can` method directly with PickyGuard.'
+    end
+
+    def cannot(_action = nil, _subject = nil, _conditions = nil, &_block)
+      raise 'You cannot use `cannot` method directly with PickyGuard.'
+    end
+
     private
 
     def validate_parameters(user_role_checker_class, resource_actions_class, role_policies_class)
