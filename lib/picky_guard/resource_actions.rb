@@ -17,7 +17,7 @@ module PickyGuard
     private
 
     def safe_hash
-      (@map ||= {})
+      (@safe_hash ||= {})
     end
 
     def validate_parameters(actions, resource)

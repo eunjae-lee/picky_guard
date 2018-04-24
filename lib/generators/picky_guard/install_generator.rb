@@ -3,7 +3,7 @@
 module PickyGuard
   module Generators
     class InstallGenerator < Rails::Generators::Base
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path('templates', __dir__)
 
       def generate_install
         copy_file 'ability.rb', 'app/models/ability.rb'

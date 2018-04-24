@@ -20,7 +20,7 @@ module PickyGuard
     private
 
     def safe_map
-      (@map ||= {})
+      (@safe_map ||= {})
     end
 
     def validate_parameters(policies, role)

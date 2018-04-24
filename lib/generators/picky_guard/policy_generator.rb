@@ -3,7 +3,7 @@
 module PickyGuard
   module Generators
     class PolicyGenerator < Rails::Generators::NamedBase
-      source_root File.expand_path('../templates', __FILE__)
+      source_root File.expand_path('templates', __dir__)
 
       desc 'Generates a policy with the given NAME'
 
@@ -21,7 +21,7 @@ module PickyGuard
       def content(name)
         class_name = class_name(name)
         puts "class_name : #{class_name}"
-        path = File.join(File.expand_path('../templates', __FILE__), 'policy.rb.erb')
+        path = File.join(File.expand_path('templates', __dir__), 'policy.rb.erb')
         ERB.new(File.read(path)).result binding
       end
 

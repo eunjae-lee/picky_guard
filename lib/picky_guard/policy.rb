@@ -10,7 +10,9 @@ module PickyGuard
     end
 
     def statements(resource_whitelist)
-      @cached_statements ||= gather_statements(resource_whitelist)
+      filtered_array(resource_whitelist).map do |_resource, statement|
+        Validator.validate_statement!(statement)
+      end
     end
 
     def statement_for(resource, &statement_definition)
@@ -23,13 +25,6 @@ module PickyGuard
 
     def register(resource, statement)
       safe_array << [resource, statement]
-      @cached_statements = nil
-    end
-
-    def gather_statements(resource_whitelist)
-      filtered_array(resource_whitelist).map do |_resource, statement|
-        Validator.validate_statement!(statement)
-      end
     end
 
     def filtered_array(resource_whitelist)
@@ -39,7 +34,7 @@ module PickyGuard
     end
 
     def safe_array
-      (@statements ||= [])
+      (@safe_array ||= [])
     end
   end
 end
