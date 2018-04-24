@@ -12,7 +12,7 @@ module PickyGuard
 
     it 'passes when overridden' do
       class MyUserRoleChecker < UserRoleChecker
-        def self.check(user, role)
+        def self.check(_user, _role)
           true
         end
       end

@@ -6,7 +6,7 @@ module PickyGuard
   class Loader
     include CanCan::Ability
 
-    def initialize(user, *resources_whitelist)
+    def initialize(_user, *resources_whitelist)
       @resources_whitelist = resources_whitelist
     end
 

@@ -2,7 +2,7 @@
 
 module PickyGuard
   class UserRoleChecker
-    def self.check(user, role)
+    def self.check(_user, _role)
       raise 'fill me'
     end
   end

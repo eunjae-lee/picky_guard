@@ -18,6 +18,7 @@ module PickyGuard
       @effect = PickyGuard::Statement::EFFECT_DENY
     end
 
+    # rubocop:disable Style/TrivialAccessors
     def actions(actions)
       @actions = actions
     end
@@ -25,6 +26,7 @@ module PickyGuard
     def conditions(conditions)
       @conditions = conditions
     end
+    # rubocop:enable Style/TrivialAccessors
 
     def instance_resource
       @resource_type = PickyGuard::Statement::RESOURCE_TYPE_INSTANCE

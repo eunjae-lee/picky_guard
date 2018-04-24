@@ -7,7 +7,7 @@ class App < ActiveRecord::Base
 end
 
 class PolicyA < PickyGuard::Policy
-  def initialize(current_user)
+  def initialize(_current_user)
     statement_for App do
       actions %w[]
       conditions status1: 2
