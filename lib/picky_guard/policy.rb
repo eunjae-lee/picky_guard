@@ -28,7 +28,7 @@ module PickyGuard
     end
 
     def filtered_array(resource_whitelist)
-      return safe_array if resource_whitelist.empty?
+      return safe_array if resource_whitelist.nil? || resource_whitelist.empty?
 
       safe_array.select { |item| resource_whitelist.include? item[0] }
     end
