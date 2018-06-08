@@ -154,14 +154,14 @@ $ rails generate picky_guard:policy reports/manage_all_reports
 
 Then it will generate `app/picky_guard/policies/reports/manage_all_reports.rb`.
 
-The generated file is like this:
+Here is a sample of policy. 
 
 ```ruby
 class ManageAllReports < PickyGuard::Policy
   def initialize(current_user)
     statement_for Campaign do
       allow
-      actions [:create]
+      actions [:read]
       conditions({})
     end
 
